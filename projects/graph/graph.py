@@ -4,35 +4,72 @@ Simple graph implementation
 from util import Stack, Queue  # These may come in handy
 
 class Graph:
-
     """Represent a graph as a dictionary of vertices mapping labels to edges."""
     def __init__(self):
         self.vertices = {}
+    
+    def __iter__(self):
+        pass
+
+    def breadth_first_iter(self, starting_vertex):
+        visited = set()
+        need_to_visit = Queue()
+        if starting_vertex not in self.vertices:
+            raise Exception(f'vertex "{starting_vertex}" not in graph')
+        cur_vertex = starting_vertex
+
+        def add_to_queue(target):
+            nonlocal visited
+            nonlocal need_to_visit
+            for vertex in target:
+                if vertex not in visited:
+                    visited.add(vertex)
+                    need_to_visit.enqueue(vertex)
+
+        add_to_queue(self.vertices[cur_vertex])
+        yield cur_vertex
+        visited.add(cur_vertex)
+        while need_to_visit.size() > 0:
+            cur_vertex = need_to_visit.dequeue()
+            add_to_queue(self.vertices[cur_vertex])
+            yield cur_vertex
 
     def add_vertex(self, vertex_id):
         """
         Add a vertex to the graph.
         """
-        pass  # TODO
+        if vertex_id in self.vertices:
+            raise Exception(f'vertex "{vertex_id}" already exists in graph')
+        self.vertices[vertex_id] = set()
 
     def add_edge(self, v1, v2):
         """
         Add a directed edge to the graph.
         """
-        pass  # TODO
+        error: str = None
+        TEMPLATE = 'vertex "{}" is not in graph'
+        if v1 not in self.vertices:
+            error = TEMPLATE.format(v1)
+        if v2 not in self.vertices:
+            error = TEMPLATE.format(v2) if error == ''\
+                else f'{error} and {TEMPLATE.format(v2)}'
+        if error:
+            raise Exception(error)
+        self.vertices[v1].add(v2)
 
     def get_neighbors(self, vertex_id):
         """
         Get all neighbors (edges) of a vertex.
         """
-        pass  # TODO
+        return list(self.vertices[vertex_id])
 
     def bft(self, starting_vertex):
         """
         Print each vertex in breadth-first order
         beginning from starting_vertex.
         """
-        pass  # TODO
+        for vertex in self.breadth_first_iter(starting_vertex):
+            print(vertex)
 
     def dft(self, starting_vertex):
         """

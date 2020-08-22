@@ -132,11 +132,11 @@ class Graph:
 
         visited = set()
 
-        def print_next_vertex(vertex):
+        def print_next_vertex(cur_vertex):
             nonlocal visited
-            print(vertex)
-            visited.add(vertex)
-            for next_vertex in self.vertices[vertex]:
+            print(cur_vertex)
+            visited.add(cur_vertex)
+            for next_vertex in self.vertices[cur_vertex]:
                 if next_vertex not in visited:
                     print_next_vertex(next_vertex)
 
@@ -148,7 +148,22 @@ class Graph:
         starting_vertex to destination_vertex in
         breath-first order.
         """
-        pass  # TODO
+        if starting_vertex not in self.vertices or destination_vertex not in self.vertices:
+            return None
+        encountered_vertices = set()
+        need_to_visit = Queue()
+        cur_vertex = starting_vertex
+        cur_path = []
+        need_to_visit.enqueue((cur_vertex, cur_path))
+        while need_to_visit.size() > 0:
+            (cur_vertex, cur_path) = need_to_visit.dequeue()
+            cur_path.append(cur_vertex)
+            if cur_vertex == destination_vertex:
+                return cur_path
+            for vertex in self.vertices[cur_vertex].difference(encountered_vertices):
+                encountered_vertices.add(vertex)
+                need_to_visit.enqueue((vertex, cur_path.copy()))
+        return None
 
     def dfs(self, starting_vertex, destination_vertex):
         """
@@ -166,7 +181,7 @@ class Graph:
 
         This should be done using recursion.
         """
-        def next_node(cur_node, cur_path):
+        def next_vertex(cur_vertex, cur_path):
             pass
 
 if __name__ == '__main__':

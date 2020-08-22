@@ -34,6 +34,47 @@ class Graph:
             add_to_queue(self.vertices[cur_vertex])
             yield cur_vertex
 
+    def depth_first_stack_iter(self, starting_vertex):
+        class State:
+            def __init__(self, vertex, remaining_neighbors):
+                self.vertex = vertex
+                self.remaining_neighbors = remaining_neighbors
+
+        visited = set()
+        history = Stack()
+
+        if starting_vertex not in self.vertices:
+            raise Exception(f'vertex "{starting_vertex}" not in graph')
+        
+        cur_state = State(starting_vertex, set(self.vertices[starting_vertex]))
+
+        yield cur_state.vertex
+        visited.add(cur_state.vertex)
+
+        def set_next_state():
+            nonlocal cur_state
+            nonlocal history
+            found_next = False
+            while not found_next:
+                cur_state.remaining_neighbors = cur_state.remaining_neighbors.difference(visited)
+                if len(cur_state.remaining_neighbors) == 0:
+                    cur_state = history.pop()
+                    if cur_state is None:
+                        return False
+                else:
+                    history.push(cur_state)
+                    next_vertex = cur_state.remaining_neighbors.pop()
+                    visited.add(next_vertex)
+                    cur_state = State(
+                        next_vertex,
+                        self.vertices[next_vertex].difference(visited),
+                    )
+                    found_next = True
+            return found_next
+
+        while set_next_state():
+            yield cur_state.vertex
+
     def add_vertex(self, vertex_id):
         """
         Add a vertex to the graph.
@@ -76,7 +117,8 @@ class Graph:
         Print each vertex in depth-first order
         beginning from starting_vertex.
         """
-        pass  # TODO
+        for vertext in self.depth_first_stack_iter(starting_vertex):
+            print(vertext)
 
     def dft_recursive(self, starting_vertex):
         """
@@ -85,7 +127,20 @@ class Graph:
 
         This should be done using recursion.
         """
-        pass  # TODO
+        if starting_vertex not in self.vertices:
+            return
+
+        visited = set()
+
+        def print_next_vertex(vertex):
+            nonlocal visited
+            print(vertex)
+            visited.add(vertex)
+            for next_vertex in self.vertices[vertex]:
+                if next_vertex not in visited:
+                    print_next_vertex(next_vertex)
+
+        print_next_vertex(starting_vertex)
 
     def bfs(self, starting_vertex, destination_vertex):
         """
@@ -111,7 +166,8 @@ class Graph:
 
         This should be done using recursion.
         """
-        pass  # TODO
+        def next_node(cur_node, cur_path):
+            pass
 
 if __name__ == '__main__':
     graph = Graph()  # Instantiate your graph
@@ -163,7 +219,7 @@ if __name__ == '__main__':
         1, 2, 3, 5, 4, 7, 6
         1, 2, 4, 7, 6, 3, 5
         1, 2, 4, 6, 3, 5, 7
-    '''
+    # '''
     graph.dft(1)
     graph.dft_recursive(1)
 

@@ -7,7 +7,7 @@ class Graph:
     """Represent a graph as a dictionary of vertices mapping labels to edges."""
     def __init__(self):
         self.vertices = {}
-    
+
     def __iter__(self):
         pass
 
@@ -45,7 +45,7 @@ class Graph:
 
         if starting_vertex not in self.vertices:
             raise Exception(f'vertex "{starting_vertex}" not in graph')
-        
+
         cur_state = State(starting_vertex, set(self.vertices[starting_vertex]))
 
         yield cur_state.vertex
@@ -174,12 +174,14 @@ class Graph:
         starting_vertex to destination_vertex in
         depth-first order.
         """
+        if starting_vertex not in self.vertices:
+            raise Exception(f'vertex "{starting_vertex}" not in graph')
+        elif destination_vertex not in self.vertices:
+            raise Exception(f'vertex "{destination_vertex}" not in graph')
+
         visited = set()
         history = Stack()
 
-        if starting_vertex not in self.vertices:
-            raise Exception(f'vertex "{starting_vertex}" not in graph')
-        
         cur_vertex = starting_vertex
         cur_path = [cur_vertex]
         cur_vertex_remaining_neighbors = self.vertices[cur_vertex]
@@ -226,6 +228,11 @@ class Graph:
 
         This should be done using recursion.
         """
+        if starting_vertex not in self.vertices:
+            raise Exception(f'vertex "{starting_vertex}" not in graph')
+        elif destination_vertex not in self.vertices:
+            raise Exception(f'vertex "{destination_vertex}" not in graph')
+
         visited = set()
         found = False
 

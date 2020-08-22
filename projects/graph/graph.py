@@ -226,8 +226,24 @@ class Graph:
 
         This should be done using recursion.
         """
-        def next_vertex(cur_vertex, cur_path):
-            pass
+        visited = set()
+        found = False
+
+        def next_vertex(cur_vertex, cur_path, neighbors):
+            nonlocal found
+            if cur_vertex == destination_vertex:
+                found = True
+                cur_path.append(cur_vertex)
+                return cur_path
+            visited.add(cur_vertex)
+            for vertex in neighbors.difference(visited):
+                path_arg = cur_path.copy()
+                path_arg.append(cur_vertex)
+                result = next_vertex(vertex, path_arg, self.vertices[vertex].difference(visited))
+                if found:
+                    return result
+
+        return next_vertex(starting_vertex, [], self.vertices[starting_vertex])
 
 if __name__ == '__main__':
     graph = Graph()  # Instantiate your graph

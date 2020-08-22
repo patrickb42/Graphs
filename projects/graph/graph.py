@@ -148,8 +148,11 @@ class Graph:
         starting_vertex to destination_vertex in
         breath-first order.
         """
-        if starting_vertex not in self.vertices or destination_vertex not in self.vertices:
-            return None
+        if starting_vertex not in self.vertices:
+            raise Exception(f'vertex "{starting_vertex}" not in graph')
+        elif destination_vertex not in self.vertices:
+            raise Exception(f'vertex "{destination_vertex}" not in graph')
+
         encountered_vertices = set()
         need_to_visit = Queue()
         cur_vertex = starting_vertex
@@ -171,7 +174,49 @@ class Graph:
         starting_vertex to destination_vertex in
         depth-first order.
         """
-        pass  # TODO
+        visited = set()
+        history = Stack()
+
+        if starting_vertex not in self.vertices:
+            raise Exception(f'vertex "{starting_vertex}" not in graph')
+        
+        cur_vertex = starting_vertex
+        cur_path = [cur_vertex]
+        cur_vertex_remaining_neighbors = self.vertices[cur_vertex]
+        found_path = False
+
+        history.push((cur_vertex, cur_path.copy(), cur_vertex_remaining_neighbors))
+
+        def set_next_state():
+            nonlocal history
+            nonlocal cur_vertex
+            nonlocal cur_path
+            nonlocal cur_vertex_remaining_neighbors
+            nonlocal found_path
+
+            found_next = False
+            while not found_next:
+                cur_vertex_remaining_neighbors = cur_vertex_remaining_neighbors.difference(visited)
+                if len(cur_vertex_remaining_neighbors) == 0:
+                    cur_state = history.pop()
+                    if cur_state is None:
+                        return False
+                    (cur_vertex, cur_path, cur_vertex_remaining_neighbors) = cur_state
+                else:
+                    history.push((cur_vertex, cur_path.copy(), cur_vertex_remaining_neighbors))
+                    next_vertex = cur_vertex_remaining_neighbors.pop()
+                    visited.add(next_vertex)
+                    cur_vertex = next_vertex
+                    cur_path.append(cur_vertex)
+                    cur_vertex_remaining_neighbors = self.vertices[cur_vertex].difference(visited)
+                    found_next = True
+            return found_next
+
+        while set_next_state():
+            if cur_vertex == destination_vertex:
+                return cur_path
+
+        return None
 
     def dfs_recursive(self, starting_vertex, destination_vertex):
         """

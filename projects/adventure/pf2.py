@@ -1,6 +1,3 @@
-# breadth first path-finding. Go breadth first until you hit a dead end or you have no unvisited neighbors
-# do a breadth first search for your nearest unvisited neighbor; go to the first one you find
-# repeat until your search for an unvisited neighbor yeilds no paths
 from typing import List, Dict, Set
 
 from room import Room
@@ -14,14 +11,9 @@ def find_path(starting_room: Room) -> List[str]:
     shortest_routes: Dict[Room, Dict[Room, List[Room]]] = {
         room: get_shortest_routes(room) for room in rooms_graph
     }
-    # shortest_routes_sorted: Dict[Room, List[List[Room]]] = make_dict_of_sorted_paths_by_length(
-    #     shortest_routes,
-    # )
 
     cur_room: Room = starting_room
     while len(rooms_set.difference(visited)) > 0:
-        readable_path = [item.id for item in raw_path]
-        # print(f'cur_path: {readable_path}')
         raw_path.extend(get_path_to_nearest_dead_end(cur_room, shortest_routes, visited))
         cur_room = raw_path[-1]
         visited.add(cur_room)
@@ -33,17 +25,6 @@ def find_path(starting_room: Room) -> List[str]:
     directional_path: List[str] = convert_rooms_path_to_direcctional(raw_path)
 
     return directional_path
-
-# def make_dict_of_sorted_paths_by_length(shortest_routes: Dict[Room, Dict[Room, List[Room]]]) -> Dict[Room, List[List[Room]]]:
-#     shortest_routes_sorted: Dict[Room, List[List[Room]]] = {}
-
-#     for starting_room, shortest_paths in shortest_routes.items():
-#         for item in shortest_paths.values():
-#             print(item)
-#         # shortest_routes_sorted[starting_room] = list(shortest_paths.values()).sort(key=len)
-#         # print(shortest_routes_sorted[starting_room])
-
-    # return shortest_routes_sorted
 
 def get_path_to_nearest_dead_end(
         starting_room: Room,

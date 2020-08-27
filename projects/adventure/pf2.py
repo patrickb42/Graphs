@@ -6,10 +6,9 @@ from util import Queue
 def find_path(starting_room: Room) -> List[str]:
     raw_path: List[Room] = [starting_room]
     visited: Set[Room] = set([starting_room])
-    rooms_graph = build_graph(starting_room)
-    rooms_set = set(rooms_graph.keys())
+    rooms_set = build_graph_set(starting_room)
     shortest_routes: Dict[Room, Dict[Room, List[Room]]] = {
-        room: get_shortest_routes(room) for room in rooms_graph
+        room: get_shortest_routes(room) for room in rooms_set
     }
 
     cur_room: Room = starting_room
@@ -39,7 +38,7 @@ def get_path_to_nearest_dead_end(
     return []
 
 def is_dead_end(room: Room, visited: Set[Room]):
-    for direction in room.get_exits:
+    for direction in room.get_exits():
         if room.get_room_in_direction(direction) not in visited:
             return False
     return True
@@ -92,22 +91,18 @@ def convert_rooms_path_to_direcctional(raw_path: List[Room]):
         room = next_room
     return directional_path
 
-def build_graph(starting_room: Room) -> Dict[Room, List[Room]]:
+def build_graph_set(starting_room: Room) -> Set[Room]:
     need_to_visit = Queue()
     visited: Set[Room] = set()
-    rooms_graph: Dict[Room, List[Room]] = {}
 
     need_to_visit.enqueue(starting_room)
 
     while need_to_visit.size() > 0:
         cur_room: Room = need_to_visit.dequeue()
-        rooms_graph[cur_room] = []
         visited.add(cur_room)
         for direction in cur_room.get_exits():
             room = cur_room.get_room_in_direction(direction)
-            if room is not None:
-                rooms_graph[cur_room].append(room)
             if room not in visited:
                 need_to_visit.enqueue(room)
 
-    return rooms_graph
+    return visited

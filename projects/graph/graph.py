@@ -243,10 +243,11 @@ class Graph:
                 cur_path.append(cur_vertex)
                 return cur_path
             visited.add(cur_vertex)
-            for vertex in neighbors.difference(visited):
+            for vertex in neighbors:
                 path_arg = cur_path.copy()
                 path_arg.append(cur_vertex)
-                result = next_vertex(vertex, path_arg, self.vertices[vertex].difference(visited))
+                if vertex not in visited:
+                    result = next_vertex(vertex, path_arg, self.vertices[vertex].difference(visited))
                 if found:
                     return result
 
